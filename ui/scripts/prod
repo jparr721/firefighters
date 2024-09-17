@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -euox pipefail
+
+# Get the version from user inputs
+version=$1
+
+docker build -t aspen/godview:$version -f docker/godview.Dockerfile .
+
+# Stop all other docker containers with "godview" in the name
+containers=$(docker ps -aq --filter "name=godview")
+
+
+if [ -n "$containers" ]; then
+  docker stop $containers && docker rm $containers
+fi
+
+docker run -d -p 80:80 --name godview-$version --restart unless-stopped aspen/godview:$version

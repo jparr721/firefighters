@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bun --hot run src/bin/index.ts
