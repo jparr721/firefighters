@@ -1,6 +1,5 @@
 import type { Express } from "express";
 import HealthRouter from "./routes/healthz";
-import FoobarRouter from "./routes/foobar";
 import logger from "./logger";
 
 function logRoutes(app: Express) {
@@ -40,7 +39,6 @@ function logRoutes(app: Express) {
 export default function makeApiRouter(app: Express) {
   app.use("/healthz", HealthRouter());
   app.use("/readyz", HealthRouter());
-  app.use("/foobar", FoobarRouter());
 
   logRoutes(app);
   return app;
