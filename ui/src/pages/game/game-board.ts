@@ -1,6 +1,5 @@
 import { Position } from ".";
 import { Fire } from "./fire";
-import { distance } from "./utils";
 
 export class GameBoard {
   private width: number;
@@ -12,6 +11,10 @@ export class GameBoard {
     this.height = height;
     this.fires = [];
     this.spawnRandomFire();
+  }
+
+  public distance(a: Position, b: Position): number {
+    return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
   }
 
   public getFires(): Fire[] {
@@ -37,15 +40,15 @@ export class GameBoard {
   public extinguishFire(position: Position): void {
     this.fires = this.fires.filter(
       (fire) =>
-        fire.position[0] !== position[0] && fire.position[1] !== position[1]
+        !(fire.position[0] === position[0] && fire.position[1] === position[1])
     );
   }
 
   public getClosestFire(position: Position): Fire {
     let closestFire = this.fires[0];
-    let closestDistance = distance(position, closestFire.position);
+    let closestDistance = this.distance(position, closestFire.position);
     for (const fire of this.fires) {
-      const distanceToFire = distance(position, fire.position);
+      const distanceToFire = this.distance(position, fire.position);
       if (distanceToFire < closestDistance) {
         closestFire = fire;
         closestDistance = distanceToFire;
@@ -62,7 +65,7 @@ export class GameBoard {
       return;
     }
 
-    // TODO don't let them span on top of each other.
+    // TODO don't let them spawn on top of each other.
 
     const position = this.getRandomPosition();
     this.fires.push(new Fire(position));

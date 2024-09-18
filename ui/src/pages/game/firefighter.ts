@@ -4,6 +4,7 @@ import { distance } from "./utils";
 
 abstract class FirefighterBase {
   position: Position;
+  public flexState: Record<string, any> = {};
   protected readonly gameBoard: GameBoard;
 
   constructor(position: Position, gameBoard: GameBoard) {
@@ -68,7 +69,26 @@ abstract class FirefighterBase {
 }
 
 export class Firefighter extends FirefighterBase {
+  private customMoveFunction:
+    | ((firefighter: Firefighter, gameBoard: GameBoard) => Promise<Position>)
+    | null = null;
+
   constructor(position: Position, gameBoard: GameBoard) {
     super(position, gameBoard);
+  }
+
+  setCustomMoveFunction(
+    fn: (firefighter: Firefighter, gameBoard: GameBoard) => Promise<Position>
+  ) {
+    this.customMoveFunction = fn;
+  }
+
+  async move(): Promise<void> {
+    if (this.customMoveFunction) {
+      this.position = await this.customMoveFunction(this, this.gameBoard);
+    } else {
+      // Fallback to the original move logic
+      await super.move();
+    }
   }
 }
